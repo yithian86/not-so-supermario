@@ -1,0 +1,18 @@
+{
+  "name": "not-so-supermario",
+  "homepage": "https://github.com/yithian86/not-so-supermario",
+  "authors": [
+    "acinelli <alex.cinelli@objectway.it>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "0.0.1"
+}
