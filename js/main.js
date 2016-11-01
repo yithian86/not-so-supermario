@@ -27,7 +27,7 @@ function preload() {
 
 function create() {
   //  A simple background for our game
-  game.add.tileSprite(0, 0, scenarioWidth, scenarioEight, 'sky');
+  game.add.tileSprite(0, scenarioEight / 3, scenarioWidth, scenarioEight, 'sky');
 
   game.world.setBounds(0, 0, scenarioWidth, scenarioEight);
 
@@ -51,16 +51,25 @@ function create() {
 
   //  Now let's create two ledges
   var i;
-  for (i = 0; i < 8 * 10 * Math.random(); i++) {
-    ledge = platforms.create(i * 31, 250, 'block');
+  var dist = 5;
+  var prevHeight = 0;
+  var currHeight = 0;
+  for (var k = 0; k < 15; k++) {
 
-    ledge.body.immovable = true;
-  }
+    if (prevHeight === 0) {
+      currHeight = getRandomWithRange(game.world.height - 200, game.world.height - 400)
+    } else {
+      currHeight = getRandomWithRange(game.world.height - 200, prevHeight + getRandomWithRange(0, 100) * getRandomSign());
+    }
 
-  for (i = 0; i < 5 * 10 * Math.random(); i++) {
-    var ledge = platforms.create(400 + i * 31, 400, 'block');
+    for (i = 0; i < getRandomWithRange(3, 15); i++) {
+      ledge = platforms.create((i + dist) * 31, currHeight, 'block');
 
-    ledge.body.immovable = true;
+      ledge.body.immovable = true;
+    }
+
+    prevHeight = currHeight;
+    dist += i + getRandomWithRange(3, 15);
   }
 
   // The player and its settings
@@ -70,7 +79,7 @@ function create() {
   game.physics.arcade.enable(player);
 
   //  Player physics properties. Give the little guy a slight bounce.
-  player.body.bounce.y = 0.4;
+  player.body.bounce.y = 0;
   player.body.gravity.y = globalGravity;
   player.body.collideWorldBounds = true;
 
@@ -86,15 +95,15 @@ function create() {
   stars.enableBody = true;
 
   //  Here we'll create 12 of them evenly spaced apart
-  for (i = 0; i < 1000 * Math.random(); i++) {
+  for (i = 0; i < getRandomWithRange(50, 100); i++) {
     //  Create a star inside of the 'stars' group
-    var star = stars.create(Math.random() * 31 * i + 70, 0, 'star');
+    var star = stars.create(i * 31 + getRandomWithRange(31, 5000), game.world.height - getRandomWithRange(200, 500), 'star');
 
     //  Let gravity do its thing
-    star.body.gravity.y = 360;
+    //star.body.gravity.y = 360;
 
     //  This just gives each star a slightly random bounce value
-    star.body.bounce.y = 0.8 + Math.random() * 0.2;
+    star.body.bounce.y = 0.5 + Math.random() * 0.2;
   }
 
   // Movement
@@ -108,6 +117,16 @@ function create() {
   game.camera.follow(player);
 }
 
+function getRandomWithRange(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomSign() {
+  return Math.random() < 0.5 ? -1 : 1;
+}
+
 function update() {
   //  Collide the player and the stars with the platforms
   game.physics.arcade.collide(player, platforms);
@@ -118,13 +137,13 @@ function update() {
 
   if (cursors.left.isDown) {
     //  Move to the left
-    player.body.velocity.x = -250;
+    player.body.velocity.x = -350;
 
     player.animations.play('left');
   }
   else if (cursors.right.isDown) {
     //  Move to the right
-    player.body.velocity.x = 250;
+    player.body.velocity.x = 350;
 
     player.animations.play('right');
   }
@@ -143,8 +162,8 @@ function update() {
 
   } else if (cursors.up.isDown && playerJumped == true)  {
     // reduce players gravity if player recently jumped
-    if (player.body.velocity.y >= -400) {
-      player.body.velocity.y = player.body.velocity.y - 25;
+    if (player.body.velocity.y >= - 550) {
+      player.body.velocity.y = player.body.velocity.y - 50;
     } else {
       playerJumped = false;
     }
